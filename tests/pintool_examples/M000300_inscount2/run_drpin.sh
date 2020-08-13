@@ -1,0 +1,1 @@
+../../scripts/run_drpin_tiny_musl.sh

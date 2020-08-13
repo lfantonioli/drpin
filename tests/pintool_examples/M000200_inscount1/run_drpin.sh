@@ -1,0 +1,1 @@
+../../scripts/run_drpin_merge_sort_musl.sh

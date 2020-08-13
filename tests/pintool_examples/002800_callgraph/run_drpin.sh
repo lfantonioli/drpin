@@ -1,0 +1,1 @@
+../../scripts/run_drpin_many_func.sh

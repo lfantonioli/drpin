@@ -6,7 +6,6 @@
 #include "drutil.h"
 #include "drsyms.h"
 #include "dr_tools.h"
-#include "funcpool.h"
 #include <string>
 #include <iostream>
 #include <stack>

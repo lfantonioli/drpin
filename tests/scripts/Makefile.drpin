@@ -1,0 +1,16 @@
+TARGET=intel64
+INC_DIR = ../../include/pin/
+
+CXXFLAGS=-I$(INC_DIR)
+
+
+SRCS = $(wildcard *.cpp)
+
+all: $(SRCS:.cpp=)
+
+.cpp:
+	mkdir -p ./obj-intel64-drpin
+	g++ $(CXXFLAGS) -fPIC -shared -o obj-intel64-drpin/$@.so $<
+
+
+

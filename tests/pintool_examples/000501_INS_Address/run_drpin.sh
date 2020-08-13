@@ -1,0 +1,1 @@
+../../scripts/run_drpin_tiny_c.sh
