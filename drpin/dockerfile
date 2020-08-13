@@ -1,0 +1,13 @@
+FROM gcc:7
+
+# expects to have an bind mount (host mount) from the root of the repo
+# on /app
+
+RUN apt-get update && apt-get install -y inotify-tools cmake expect-dev g++ g++-multilib doxygen transfig imagemagick
+
+WORKDIR /app/drpin
+
+# this is needed before the mount to specfy the CMD command
+COPY ./scripts /app/drpin/scripts
+
+CMD ["./scripts/watcher.sh"]

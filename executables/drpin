@@ -1,0 +1,74 @@
+#!/usr/bin/python3
+
+import argparse
+import os
+import sys
+import subprocess
+import time
+
+def execute(command):
+    process = subprocess.Popen(command, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+    # Poll process for new output until finished
+    while True:
+        nextline = process.stdout.readline()
+        if nextline == b'' and process.poll() is not None:
+            break
+        sys.stdout.buffer.write(nextline)
+        sys.stdout.flush()
+
+    output = process.communicate()[0]
+    exitCode = process.returncode
+
+    if (exitCode == 0):
+        return output
+    else:
+        sys.exit(1)
+
+# import subprocess
+
+def execute1(cmd):
+    popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
+    for stdout_line in iter(popen.stdout.readline, ""):
+        yield stdout_line 
+    popen.stdout.close()
+    return_code = popen.wait()
+    if return_code:
+        raise subprocess.CalledProcessError(return_code, cmd)
+
+
+def main():
+    cwd = os.path.dirname(os.path.realpath(__file__))
+
+    DYNAMORIO_EXE = os.path.join(cwd, "../dynamorio/build/bin64/drrun")
+    DRPIN_TOOL= os.path.join(cwd, "../drpin/build/libdrpin.so")
+
+    parser = argparse.ArgumentParser(description='DrPin executable')
+    parser.add_argument('-t', dest='pintool', default="drpin_none", help="pintool to be used")
+
+    # args = parser.parse_args()
+    args, unknownargs = parser.parse_known_args()
+    pintool_op = []
+    for i in unknownargs:
+        if i == "--":
+            break
+        else:
+            pintool_op.append(i)
+
+    rest_command = []
+    flag = False
+    for i in unknownargs:
+        if i == "--":
+            flag = True
+            rest_command.append(i)
+        elif flag == True:
+            rest_command.append(i)
+
+
+    pintool_op_str = " ".join(pintool_op)
+    exec_list = [DYNAMORIO_EXE, "-vm_size", "512M",  "-c", DRPIN_TOOL, "--pintool", args.pintool, "--pintool_op",  pintool_op_str] + rest_command
+    execute(exec_list)
+
+
+if __name__ == "__main__":
+    main()
